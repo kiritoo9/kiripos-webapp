@@ -1,19 +1,18 @@
 <script lang="ts">
     import Navbar from "../components/Navbar.svelte"
     import Sidebar from "../components/Sidebar.svelte"
-    import { checkCredential, registCredential } from "../hooks"
+    import Login from "../components/Login.svelte"
+    import { checkCredential } from "../hooks"
 
     let sessionFlash = {}
     function sessReload() {
         sessionFlash = {}
     }
-
-    async function doLogin() {
-        const response = await registCredential( "admin", "admin" )
-        if(response) {
+    function handleLogin(resp:any) {
+        if (resp.status) {
             sessReload()
-        } else {
-            alert("Login failed")
+        } else if(!resp.status && resp.attempt > 0) {
+            alert("Login error")
         }
     }
 </script>
@@ -27,8 +26,7 @@
                 <Sidebar />
                 <slot />
             {:else}
-                <p>You did not login yet</p>
-                <button on:click={doLogin}>Login</button>
+                <Login onChange={handleLogin} />
             {/if}
 
         </div>
